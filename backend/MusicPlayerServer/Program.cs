@@ -1,17 +1,43 @@
-using MusicPlayerServer.Services;
+using MusicPlayer;
 
-var builder = WebApplication.CreateBuilder(args);
 
-// Additional configuration is required to successfully run gRPC on macOS.
-// For instructions on how to configure Kestrel and gRPC clients on macOS, visit https://go.microsoft.com/fwlink/?linkid=2099682
 
-// Add services to the container.
-builder.Services.AddGrpc();
+class Program
+{
 
-var app = builder.Build();
+    public static async Task Main(string[] args)
+    {
 
-// Configure the HTTP request pipeline.
-app.MapGrpcService<GreeterService>();
-app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
+        Player pl = new();
 
-app.Run();
+        pl.Start();
+
+        int Dur = 3000;
+        Console.WriteLine("Delay main thred for " + Dur.ToString() + " ms");
+        await Task.Delay(Dur);
+
+        //pl.Next(3000);
+        //Console.WriteLine("Delay main thred for " + (Dur/2).ToString() + " ms");
+        //await Task.Delay(Dur / 2);
+
+        pl.Pause();
+
+        Console.WriteLine("Make pause");
+        Console.WriteLine("Delay main thred for " + (Dur * 2).ToString() + " ms");
+        await Task.Delay(Dur * 2);
+
+        pl.Start();
+        Console.WriteLine("Mare resume");
+
+
+        Dur *= 3;
+        Console.WriteLine("Delay main thred for " + Dur.ToString() + " ms");
+        await Task.Delay(Dur);
+
+        return;
+    }
+}
+
+
+
+
