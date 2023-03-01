@@ -13,7 +13,7 @@ public class EmulatorPlayer
 {
     public int Duration { get; set; }
 
-    public Task Emulator { get; set; }
+    private Task Emulator { get; set; }
 
     public CancellationTokenSource CTokenSource = new();
     private CancellationToken CToken { get; set; }
@@ -26,7 +26,7 @@ public class EmulatorPlayer
     }
 
 
-    public async Task StartTaskAsync(Action<EmulatorPlayerErrors> callback)
+    private async Task StartTaskAsync(Action<EmulatorPlayerErrors> callback)
     {
 
         Console.WriteLine("Task restarted with delay " + Duration.ToString());
@@ -47,7 +47,7 @@ public class EmulatorPlayer
 
     public async void RestartTaskAsync(Action<EmulatorPlayerErrors> callback)
     {
-        //ManualResetEventSlim pauseEvent = new(true);
+        
 
 
         if (Emulator != null && !Emulator.IsCompleted)

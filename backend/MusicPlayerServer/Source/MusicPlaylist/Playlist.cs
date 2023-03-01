@@ -10,6 +10,12 @@ public class Playlist
     private LinkedList<Track> playlist = new();
 
 
+    public Playlist(string name) 
+    {
+        Name = name;  
+    }
+
+
     public LinkedListNode<Track> Next(ref LinkedListNode<Track> current)
     {
         return current.Next;

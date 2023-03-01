@@ -17,13 +17,11 @@ public enum CurrentAction
 public class Player
 {
 
-    public Playlist playlist = null;
-
-    private LinkedListNode<Track> current = null;
-
+    private Playlist playlist;
+    private LinkedListNode<Track> current;
+    private long pauseTime = 0;
     EmulatorPlayer EP { get; set; } = new();
     CurrentAction currentAction ;
-    //ManualResetEventSlim pauseEvent { get; set; } = new(false);
 
 
     public Player() { }
@@ -73,8 +71,10 @@ public class Player
 
     public void Pause()
     {
+        
+        
         currentAction = CurrentAction.Pause;
-        //pauseEvent.Reset();
+        
     }
 
 
