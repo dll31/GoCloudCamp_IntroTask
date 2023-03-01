@@ -19,7 +19,7 @@ public class Player
 
     private Playlist playlist;
     private LinkedListNode<Track> current;
-    private long pauseTime = 0;
+    
     EmulatorPlayer EP { get; set; } = new();
     CurrentAction currentAction ;
 
@@ -40,12 +40,12 @@ public class Player
         
         if (currentAction == CurrentAction.Pause)
         {
-            //pauseEvent.Set();
+            Console.WriteLine("Resume");
             currentAction = CurrentAction.Start;
+            EP.RestartTaskAsync(EPcallback, true);
         }
         else
         {
-            EP.RemakeCTokens();
             Console.WriteLine("Start");
             EP.Duration = playlist.GetDuration(ref current);
             currentAction = CurrentAction.Start;
@@ -56,9 +56,12 @@ public class Player
 
     private void EPcallback(EmulatorPlayerErrors error)
     {
-        Console.WriteLine("Callback");
+        Console.WriteLine("Callback. CurrentAction is " + currentAction);
         if (currentAction == CurrentAction.Start)
             currentAction = CurrentAction.Next;
+
+        if (currentAction == CurrentAction.Pause)
+            return;
 
         if (currentAction == CurrentAction.Next)
         {
@@ -71,10 +74,9 @@ public class Player
 
     public void Pause()
     {
-        
-        
+        Console.WriteLine("Pause");
         currentAction = CurrentAction.Pause;
-        
+        EP.CTokenSource.Cancel();
     }
 
 
@@ -87,9 +89,8 @@ public class Player
         if (current == null) { return; }
 
         Console.WriteLine("Next");
-        EP.CTokenSource.Cancel();
+        
 
-        EP.RemakeCTokens();
         EP.Duration = playlist.GetDuration(ref current);
         currentAction = CurrentAction.Next;
         EP.RestartTaskAsync(EPcallback);
