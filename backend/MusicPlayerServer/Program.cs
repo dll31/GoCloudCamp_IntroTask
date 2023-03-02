@@ -1,7 +1,9 @@
 using MusicPlayer;
+using MusicPlayerServer.Source.MusicPlaylist;
 using MusicPlaylist;
 using MusicTrack;
-using System.Diagnostics;
+using Newtonsoft.Json;
+using System.IO;
 
 class Program
 {
@@ -12,35 +14,54 @@ class Program
         Track t1 = new("t1", "author", 500, "");
         Track t2 = new("t1", "author", 1500, "");
 
+        TrackLoader tl = new ();
+        tl.SetSource("library.json");
 
-        Playlist playlist = new("Test1");
-        playlist.AddTrack(ref t1);
-        playlist.AddTrack(ref t2);
+        List<Track> tracks = tl.UploadTracksFromSource();
+
+        Console.WriteLine(tracks.Count);
+
+        //List<Track> tracks = new ();
+        //tracks.Add(t1);
+        //tracks.Add(t2);
+
+        //using (StreamWriter file = File.CreateText("library.json"))
+        //{
+        //    JsonSerializer serializer = new ();
+        //    serializer.Serialize(file, tracks);
+        //}
 
 
-        Player pl = new();
-        pl.SetPlaylist(ref playlist);
 
-        pl.Start();
 
-        int Dur = 200;
-        Console.WriteLine("Delay main thred for " + Dur.ToString() + " ms");
-        await Task.Delay(Dur);
+        //Playlist playlist = new("Test1");
+        //playlist.AddTrack(ref t1);
+        //playlist.AddTrack(ref t2);
 
-        pl.Next();
 
-        Console.WriteLine("Delay main thred for " + (Dur * 3).ToString() + " ms");
-        await Task.Delay(Dur * 3);
+        //Player pl = new();
+        //pl.SetPlaylist(ref playlist);
 
-        pl.Prev();
+        //pl.Start();
 
-        Console.WriteLine("Delay main thred for " + (Dur * 3).ToString() + " ms");
-        await Task.Delay(Dur * 3);
+        //int Dur = 200;
+        //Console.WriteLine("Delay main thred for " + Dur.ToString() + " ms");
+        //await Task.Delay(Dur);
 
-        pl.Next();
+        //pl.Next();
 
-        Console.WriteLine("Delay main thred for " + (Dur * 10).ToString() + " ms");
-        await Task.Delay(Dur * 10);
+        //Console.WriteLine("Delay main thred for " + (Dur * 3).ToString() + " ms");
+        //await Task.Delay(Dur * 3);
+
+        //pl.Prev();
+
+        //Console.WriteLine("Delay main thred for " + (Dur * 3).ToString() + " ms");
+        //await Task.Delay(Dur * 3);
+
+        //pl.Next();
+
+        //Console.WriteLine("Delay main thred for " + (Dur * 10).ToString() + " ms");
+        //await Task.Delay(Dur * 10);
 
         return;
     }
