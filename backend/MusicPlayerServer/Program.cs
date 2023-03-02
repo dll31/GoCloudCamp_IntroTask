@@ -27,12 +27,12 @@ class Program
         Console.WriteLine("Delay main thred for " + Dur.ToString() + " ms");
         await Task.Delay(Dur);
 
-        pl.Pause();
+        pl.Next();
 
         Console.WriteLine("Delay main thred for " + (Dur * 3).ToString() + " ms");
         await Task.Delay(Dur * 3);
 
-        pl.Start();
+        pl.Prev();
 
         Console.WriteLine("Delay main thred for " + (Dur * 3).ToString() + " ms");
         await Task.Delay(Dur * 3);

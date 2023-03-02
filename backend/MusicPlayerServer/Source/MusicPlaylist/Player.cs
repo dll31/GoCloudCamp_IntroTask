@@ -10,13 +10,12 @@ public enum CurrentAction
     Start,
     Pause,
     Next,
-    Prew
+    Prev
 }
 
 
 public class Player
 {
-
     private Playlist playlist;
     private LinkedListNode<Track> current;
     
@@ -34,26 +33,6 @@ public class Player
     }
 
 
-    public void Start()
-    {
-        if (current == null) { return; }
-        
-        if (currentAction == CurrentAction.Pause)
-        {
-            Console.WriteLine("Resume");
-            currentAction = CurrentAction.Start;
-            EP.RestartTaskAsync(EPcallback, true);
-        }
-        else
-        {
-            Console.WriteLine("Start");
-            EP.Duration = playlist.GetDuration(ref current);
-            currentAction = CurrentAction.Start;
-            EP.RestartTaskAsync(EPcallback);
-        }
-    }
-
-
     private void EPcallback(EmulatorPlayerErrors error)
     {
         Console.WriteLine("Callback. CurrentAction is " + currentAction);
@@ -63,36 +42,125 @@ public class Player
         if (currentAction == CurrentAction.Pause)
             return;
 
-        if (currentAction == CurrentAction.Next)
+        if (error == EmulatorPlayerErrors.Timeout && (currentAction == CurrentAction.Next || currentAction == CurrentAction.Prev))
         {
             Console.WriteLine("Make next");
-            Next();
+            // How to rework StartNext in this case to see errors?
+            StartNext();
         }
 
     }
 
 
-    public void Pause()
+    private MusicPlayerErrors TryToGetBegin()
+    {
+        if (current == null)
+        {
+            if (playlist.GetBegin() == null)
+                return MusicPlayerErrors.NoSongsInPlaylist;
+            else
+                current = playlist.GetBegin();
+        }
+        return MusicPlayerErrors.AllOk;
+    }
+
+
+    public MusicPlayerErrors Start()
+    {
+        if (current == null) 
+        {
+            if (TryToGetBegin() == MusicPlayerErrors.NoSongsInPlaylist) 
+                return MusicPlayerErrors.NoSongsInPlaylist;
+        }
+
+        if (currentAction == CurrentAction.Pause)
+        {
+            Console.WriteLine("Resume");
+            currentAction = CurrentAction.Start;
+            EP.RestartTaskAsync(EPcallback, true);
+        }
+        else
+        {
+            Console.WriteLine("Start");
+
+            currentAction = CurrentAction.Start;
+            PlayCurrentSong();
+        }
+
+        return MusicPlayerErrors.AllOk;
+    }
+
+
+    public MusicPlayerErrors Pause()
     {
         Console.WriteLine("Pause");
         currentAction = CurrentAction.Pause;
         EP.CTokenSource.Cancel();
+
+        return MusicPlayerErrors.Pause;
     }
 
 
-    public void Next()
+    public MusicPlayerErrors Next()
     {
-        if (current == null) { return; }
+        Console.WriteLine("Next");
+
+        currentAction = CurrentAction.Next;
+        EP.CTokenSource.Cancel();
+
+        return StartNext();
+    }
+
+
+    public MusicPlayerErrors StartNext()
+    {
+        if (current == null) { return MusicPlayerErrors.NoCurrentSong; }
 
         current = playlist.Next(ref current);
 
-        if (current == null) { return; }
+        if (current == null) { return MusicPlayerErrors.EndOfPlaylist; }
 
-        Console.WriteLine("Next");
-        
+        PlayCurrentSong();
 
+        return MusicPlayerErrors.StartNextSong;
+    }
+
+
+    public MusicPlayerErrors Prev()
+    {
+        if (current == null) { return MusicPlayerErrors.NoCurrentSong; }
+
+        current = playlist.Prev(ref current);
+
+        if (TryToGetBegin() == MusicPlayerErrors.NoSongsInPlaylist) return MusicPlayerErrors.NoSongsInPlaylist;
+
+        Console.WriteLine("Prev");
+
+        currentAction = CurrentAction.Prev;
+        PlayCurrentSong();
+
+        return MusicPlayerErrors.StartPrevSong;
+    }
+
+    private void PlayCurrentSong()
+    {
         EP.Duration = playlist.GetDuration(ref current);
-        currentAction = CurrentAction.Next;
         EP.RestartTaskAsync(EPcallback);
     }
+
+}
+
+public enum MusicPlayerErrors
+{
+    AllOk,
+    
+    NoCurrentSong,
+    NoPrevSong,
+    EndOfPlaylist,
+    NoSongsInPlaylist,
+
+    StartNextSong,
+    StartPrevSong,
+
+    Pause
 }

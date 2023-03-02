@@ -33,6 +33,7 @@ public class EmulatorPlayer
 
     private async Task StartTaskAsync(Action<EmulatorPlayerErrors> callback, long pause = 0)
     {
+        Interlocked.Exchange(ref pauseTime, 0);
         Stopwatch stopwatch = Stopwatch.StartNew();
 
         Console.WriteLine("Task restarted with delay " + (Duration-(int)pause).ToString());
