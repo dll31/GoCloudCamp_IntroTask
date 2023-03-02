@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+option csharp_namespace = "MusicPlayerServer";
+
+package taskSender;
+
+
+message TransferTrack{
+	string Name = 1;
+	string Author = 2;
+	int32 Duration = 3;
+}
+
+
+service TransferTracklist {
+  rpc Transfer (SendTracklistRequest) returns (SendTracklistResponse) {};
+}
+
+
+message SendTracklistRequest {}
+
+
+message SendTracklistResponse {
+  repeated TransferTrack Tracklist = 1;
+}
