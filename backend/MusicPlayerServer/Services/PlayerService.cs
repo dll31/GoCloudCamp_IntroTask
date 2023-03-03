@@ -9,12 +9,12 @@ namespace MusicPlayerServer.Services
 {
     public class PlayerService : PlayerApp.PlayerAppBase
     {
-        private Player player = new();
-        private List<TransferTrack> transferTracklist = new();
+        static private Player player = new();
+        static private List<TransferTrack> transferTracklist = new();
 
-        private TrackLoader trackLoader = new();
-        private List<Playlist> playlistCollection = new();
-        private List<Track> trackLibrary = new();
+        static private TrackLoader trackLoader = new();
+        static private List<Playlist> playlistCollection = new();
+        static private List<Track> trackLibrary = new();
         
 
 

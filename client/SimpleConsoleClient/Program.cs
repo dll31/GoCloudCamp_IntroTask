@@ -60,9 +60,10 @@ class Program
         Console.WriteLine("Playlist library:");
         foreach (var playlist in playlistLibrary)
         {
+            Console.WriteLine($"Playlist name : {playlist.Header.Name}");
             if (playlist.Content == null)
                 continue;
-            Console.WriteLine($"Playlist name : {playlist.Header.Name}");
+            
             foreach (var track in playlist.Content.Tracks.ToList())
             {
                 Console.WriteLine($"Track : {track.Name} -- {track.Author}");
