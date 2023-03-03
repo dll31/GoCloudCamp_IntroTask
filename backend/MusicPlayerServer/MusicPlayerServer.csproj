@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net6.0</TargetFramework>
@@ -10,10 +10,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-	<None Remove="Protos\TrackSender.proto" />
+    <None Remove="Protos\Player.proto" />
   </ItemGroup>
+
   <ItemGroup>
-    <Protobuf Include="Protos\TrackSender.proto" GrpcServices="Server" />
+    <Protobuf Include="Protos\Player.proto" GrpcServices="Server" />
   </ItemGroup>
 
   <ItemGroup>
