@@ -1,0 +1,115 @@
+syntax = "proto3";
+
+option csharp_namespace = "MusicPlayerSimpleConsoleClient";
+
+package playerOparations;
+
+
+service PlayerApp {
+  rpc TransferTracklist (SendTracklistRequest) returns (SendTracklistResponse);
+  rpc CreatePlaylist (CreatePlaylistRequest) returns (CreatePlaylistResponse);
+  rpc AddTrackToPlaylist (AddTrackToPlaylistRequest) returns (AddTrackToPlaylistResponse);
+  rpc StartPlaylist (StartPlaylistRequest) returns (StartPlaylistResponse);
+  rpc ResolveOperation (OperationRequest) returns (OperationResponse);
+}
+
+
+enum ErrorCode
+{
+	ERROR_CODE_OK = 0;
+	ERROR_CODE_NO_SUCH_PLAYLIST = 1;
+	ERROR_CODE_NO_SUCH_TRACK = 2;
+
+	ERROR_CODE_NO_CURRENT_SONG = 3;
+	ERROR_CODE_NO_PREV_SONG = 4;
+	ERROR_CODE_END_OF_PLAYLIST = 5;
+	ERROR_CODE_NO_SONGS_IN_PLAYLIST = 6;
+	ERROR_CODE_START_NEXT_SONG = 7;
+	ERROR_CODE_START_PREV_SONG = 8;
+	ERROR_CODE_PAUSE = 9;
+}
+
+
+enum Operation
+{
+	OPERATION_PLAY = 0;
+	OPERATION_PAUSE = 1;
+	OPERATION_NEXT = 2;
+	OPERATION_PREV = 3;
+}
+
+
+message OperationRequest {
+	Operation Op = 1;
+}
+
+message OperationResponse{
+	string Msg = 1;
+	ErrorCode PlayerEr = 2;
+}
+
+
+message TransferTrack {
+	string Name = 1;
+	string Author = 2;
+	int32 Duration = 3;
+}
+
+message SendTracklistRequest {}
+
+message SendTracklistResponse {
+	repeated TransferTrack Tracklist = 1;
+}
+
+
+message TransferPlaylistHeader {
+	string Name = 1;
+	int64 Id = 2;
+}
+
+message TransferPlaylistContent {
+	repeated TransferTrack Tracks = 1;
+}
+
+message TransferPlaylist {
+	TransferPlaylistHeader Header = 1;
+	TransferPlaylistContent Content = 2;
+}
+
+message CreatePlaylistRequest {
+	string Name = 1;
+}
+
+message CreatePlaylistResponse {
+	string Msg = 1;
+	TransferPlaylistHeader Playlist = 2;
+}
+
+message AddTrackToPlaylistRequest {
+	TypicalPlaylistRequest Req = 1;
+	TransferTrack Tr = 2;
+}
+
+message AddTrackToPlaylistResponse {
+	TypicalPlaylistResponse Resp = 1;
+	TransferPlaylistContent NewPlaylistContent = 2;
+}
+
+
+message StartPlaylistRequest {
+	TypicalPlaylistRequest Req = 1;
+}
+
+message StartPlaylistResponse {
+	TypicalPlaylistResponse Resp = 1;
+}
+
+
+message TypicalPlaylistRequest {
+	int64 Id = 1;	
+}
+
+message TypicalPlaylistResponse {
+	ErrorCode ErC = 1;
+	string Msg = 2;	
+}
