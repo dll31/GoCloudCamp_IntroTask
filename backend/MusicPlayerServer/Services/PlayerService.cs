@@ -50,7 +50,7 @@ namespace MusicPlayerServer.Services
 
         public override Task<AddTrackToPlaylistResponse> AddTrackToPlaylist (AddTrackToPlaylistRequest request, ServerCallContext context)
         {
-            AddTrackToPlaylistResponse response = new();
+            AddTrackToPlaylistResponse response = new AddTrackToPlaylistResponse { Resp = new(), NewPlaylistContent = new() };
             response.Resp.ErC = ErrorCode.Ok;
             TypicalPlaylistResponse resp = response.Resp;
 
@@ -80,7 +80,7 @@ namespace MusicPlayerServer.Services
 
         public override Task<StartPlaylistResponse> StartPlaylist(StartPlaylistRequest request, ServerCallContext context)
         {
-            StartPlaylistResponse response = new();
+            StartPlaylistResponse response = new StartPlaylistResponse { Resp = new()};
             response.Resp.ErC = ErrorCode.Ok;
             TypicalPlaylistResponse resp = response.Resp;
 
