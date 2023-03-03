@@ -79,9 +79,9 @@ namespace MusicPlayerServer.Services
         }
 
 
-        public override Task<StartPlaylistResponce> StartPlaylist(StartPlaylistRequest request, ServerCallContext context)
+        public override Task<StartPlaylistResponse> StartPlaylist(StartPlaylistRequest request, ServerCallContext context)
         {
-            StartPlaylistResponce response = new();
+            StartPlaylistResponse response = new();
             response.Resp.ErC = ErrorCode.Ok;
             TypicalPlaylistResponse resp = response.Resp;
 
@@ -89,31 +89,96 @@ namespace MusicPlayerServer.Services
             response.Resp = resp;
             if (response.Resp.ErC != ErrorCode.Ok) return Task.FromResult(response); 
 
-
-            Track? tr = TypicalCheckTrackExist(request.Req, ref resp, request.Tr);
-            response.Resp = resp;
-            if (response.Resp.ErC != ErrorCode.Ok) return Task.FromResult(response);
-
-
             player.SetPlaylist(ref pl);
-            //start with current = tr
+            player.Start();
 
             response.Resp.ErC = ErrorCode.Ok;
-            response.Resp.Msg = "Add track " + request.Tr.Name + " to playlist " + pl.Name;
+            response.Resp.Msg = "Start player with playlist name " + pl.Name;
 
             return Task.FromResult(response);
         }
 
 
-        //public override Task<OperationResponse> ResolveOperation (OperationRequest request, ServerCallContext context)
-        //{
-        //    OperationResponse response = new();
+        public override Task<OperationResponse> ResolveOperation(OperationRequest request, ServerCallContext context)
+        {
+            OperationResponse response = new();
+            MusicPlayerErrors rc = MusicPlayerErrors.AllOk;
 
-        //    switch (request.Op)
-        //    {
-        //        case 
-        //    }
-        //}
+
+            switch (request.Op)
+            {
+                case Operation.Play:
+                    rc = player.Start();
+                    if (rc == MusicPlayerErrors.NoCurrentSong)
+                    {
+                        response.Msg = "Add songs before playing playlist";
+                        response.PlayerEr = ErrorCode.NoCurrentSong;
+                    }
+                    else if (rc == MusicPlayerErrors.AllOk)
+                    {
+                        response.Msg = "Start playing";
+                        response.PlayerEr = ErrorCode.Ok;
+                    }
+
+                    break;
+
+                case Operation.Pause:
+                    rc = player.Pause();
+
+                    if (rc == MusicPlayerErrors.Pause)
+                    {
+                        response.Msg = "Playlist is paused";
+                        response.PlayerEr = ErrorCode.Pause;
+                    }
+                    
+                    break;
+
+                case Operation.Next:
+                    rc = player.Next();
+
+                    if (rc == MusicPlayerErrors.NoCurrentSong)
+                    {
+                        response.Msg = "Somethimg wrong. Playlist has no current song";
+                        response.PlayerEr = ErrorCode.NoCurrentSong;
+                    }
+                    else if (rc == MusicPlayerErrors.EndOfPlaylist)
+                    {
+                        response.Msg = "Playlist is ended";
+                        response.PlayerEr = ErrorCode.EndOfPlaylist;
+                    }
+                    else if (rc == MusicPlayerErrors.StartNextSong)
+                    {
+                        response.Msg = "Next song is started";
+                        response.PlayerEr = ErrorCode.StartNextSong;
+                    }
+
+                    break;
+
+                case Operation.Prev:
+                    rc = player.Prev();
+
+                    if (rc == MusicPlayerErrors.NoCurrentSong)
+                    {
+                        response.Msg = "Somethimg wrong. Playlist has no current song";
+                        response.PlayerEr = ErrorCode.NoCurrentSong;
+                    }
+                    else if (rc == MusicPlayerErrors.NoSongsInPlaylist)
+                    {
+                        response.Msg = "Add songs before playing playlist";
+                        response.PlayerEr = ErrorCode.NoCurrentSong;
+                    }
+                    else if (rc == MusicPlayerErrors.StartPrevSong)
+                    {
+                        response.Msg = "Start prev song";
+                        response.PlayerEr = ErrorCode.StartPrevSong;
+                    }
+
+                    break;
+            }
+
+            return Task.FromResult(response);
+        }
+
 
         private Playlist TypicalCheckPlaylistExist(TypicalPlaylistRequest request, ref TypicalPlaylistResponse response)
         {
