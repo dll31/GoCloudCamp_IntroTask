@@ -5,14 +5,17 @@ namespace MusicPlaylist;
 
 public class Playlist
 {
-    public long Id { get; }
+    private static long nextID = 1;
+
+    public long Id { get; private set; }
     public string Name { get; set; }
-    private LinkedList<Track> playlist = new();
+    public LinkedList<Track> playlist { get; private set; }  = new();
 
 
     public Playlist(string name) 
     {
-        Name = name;  
+        Name = name;
+        Id = nextID++;
     }
 
 
@@ -34,7 +37,7 @@ public class Playlist
     }
 
 
-    public void AddTrack(ref Track track)
+    public void AddTrack(Track track)
     {
         playlist.AddLast(track);
     }
