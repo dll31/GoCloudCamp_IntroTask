@@ -18,7 +18,7 @@ public class EmulatorPlayer
 
     private Task Emulator { get; set; }
 
-    public CancellationTokenSource CTokenSource = new();
+    private CancellationTokenSource CTokenSource = new();
     private CancellationToken CToken { get; set; }
 
     private long pauseTime = 0;
@@ -28,6 +28,12 @@ public class EmulatorPlayer
     {
         CTokenSource = new CancellationTokenSource();
         CToken = CTokenSource.Token;
+    }
+
+
+    public void Cancel()
+    {
+        CTokenSource.Cancel();
     }
 
 

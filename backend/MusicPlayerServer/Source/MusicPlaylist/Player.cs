@@ -95,7 +95,7 @@ public class Player
     {
         Console.WriteLine("Pause");
         currentAction = CurrentAction.Pause;
-        EP.CTokenSource.Cancel();
+        EP.Cancel();
 
         return MusicPlayerErrors.Pause;
     }
@@ -106,7 +106,7 @@ public class Player
         Console.WriteLine("Next");
 
         currentAction = CurrentAction.Next;
-        EP.CTokenSource.Cancel();
+        EP.Cancel();
 
         return StartNext();
     }
