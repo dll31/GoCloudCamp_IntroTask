@@ -29,5 +29,16 @@ namespace MusicPlayerServer.Source.MusicPlaylist
             return tracklist ?? new List<Track>();
         }
 
+
+        private void UpdateLibrarySource(ref List<Track> tracklist)
+        {
+            using (StreamWriter file = File.CreateText("library.json"))
+            {
+                JsonSerializer serializer = new();
+                serializer.Serialize(file, tracklist);
+            }
+        }
+
+
     }
 }

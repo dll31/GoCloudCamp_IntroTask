@@ -9,7 +9,7 @@ public class Track
     public int Duration { get; set; } = 0;
     public string Path { get; set; } = string.Empty;
 
-    Track() { }
+    public Track() { }
 
     public Track(string name, string author, int duration, string path)
     {
