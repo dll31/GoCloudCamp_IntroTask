@@ -1,68 +1,21 @@
-using MusicPlayer;
-using MusicPlayerServer.Source.MusicPlaylist;
-using MusicPlaylist;
-using MusicTrack;
-using Newtonsoft.Json;
-using System.IO;
+using MusicPlayerServer.Services;
 
 class Program
 {
 
-    public static async Task Main(string[] args)
+    public static void Main(string[] args)
     {
+        var builder = WebApplication.CreateBuilder(args);
 
-        Track t1 = new("t1", "author", 500, "");
-        Track t2 = new("t1", "author", 1500, "");
+        builder.Services.AddGrpc();
 
-        TrackLoader tl = new ();
-        tl.SetSource("library.json");
-
-        List<Track> tracks = tl.UploadTracksFromSource();
-
-        Console.WriteLine(tracks.Count);
-
-        //List<Track> tracks = new ();
-        //tracks.Add(t1);
-        //tracks.Add(t2);
-
-        //using (StreamWriter file = File.CreateText("library.json"))
-        //{
-        //    JsonSerializer serializer = new ();
-        //    serializer.Serialize(file, tracks);
-        //}
+        var app = builder.Build();
 
 
+        // Configure the HTTP request pipeline.
+        app.MapGrpcService<PlayerService>();
+        app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
-
-        //Playlist playlist = new("Test1");
-        //playlist.AddTrack(ref t1);
-        //playlist.AddTrack(ref t2);
-
-
-        //Player pl = new();
-        //pl.SetPlaylist(ref playlist);
-
-        //pl.Start();
-
-        //int Dur = 200;
-        //Console.WriteLine("Delay main thred for " + Dur.ToString() + " ms");
-        //await Task.Delay(Dur);
-
-        //pl.Next();
-
-        //Console.WriteLine("Delay main thred for " + (Dur * 3).ToString() + " ms");
-        //await Task.Delay(Dur * 3);
-
-        //pl.Prev();
-
-        //Console.WriteLine("Delay main thred for " + (Dur * 3).ToString() + " ms");
-        //await Task.Delay(Dur * 3);
-
-        //pl.Next();
-
-        //Console.WriteLine("Delay main thred for " + (Dur * 10).ToString() + " ms");
-        //await Task.Delay(Dur * 10);
-
-        return;
+        app.Run();
     }
 }
